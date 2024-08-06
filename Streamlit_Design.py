@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import reveal_slides as rs
 import streamlit.components.v1 as components
 from streamlit_carousel import carousel
 import get_youtube_playlist_songs as youtube
