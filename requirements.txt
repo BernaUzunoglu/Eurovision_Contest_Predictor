@@ -9,4 +9,4 @@ seaborn
 pydeck
 altair
 joblib
-sklearn
+scikit-learn
