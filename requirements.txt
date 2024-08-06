@@ -9,3 +9,4 @@ seaborn
 pydeck
 altair
 joblib
+sklearn
