@@ -10,3 +10,4 @@ pydeck
 altair
 joblib
 scikit-learn
+openpyxl
