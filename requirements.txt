@@ -1,0 +1,12 @@
+streamlit
+pandas
+plotly
+reveal_slides
+streamlit_carousel
+requests
+yt_dlp
+matplotlib
+seaborn
+pydeck
+altair
+joblib
