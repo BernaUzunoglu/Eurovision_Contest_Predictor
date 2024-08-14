@@ -44,37 +44,37 @@ loaded_model = joblib.load('random_forest_eurovision_predictor.joblib')
 meta, world_happinies = get_data()
 meta1 = meta[['PARTICIPATION_RATE','DANCEABILITY', 'ENERGY', 'LOUDNESS', 'SPEECHINESS', 'ACOUSTICNESS', 'INSTRUMENTALNESS', 'LIVENESS', 'VALENCE', 'TEMPO', 'GDP_PER_CAPITA', 'SOCIAL_SUPPORT', 'NEGATIVE_AFFECT', 'PERCEPTIONS_OF_CORRUPTION', 'GENEROSITY', 'HEALTHY_LIFE_EXPECTANCY_AT_BIRTH', 'FREEDOM_TO_MAKE_LIFE_CHOICES']]
 
-video_html = """
-       <style>
+# video_html = """
+#        <style>
+#
+#        #myVideo {
+#          position: fixed;
+#          right: 0;
+#          bottom: 0;
+#          min-width: 100%;
+#          min-height: 100%;
+#          object-fit: fit;
+#
+#        }
+#
+#        .content {
+#          position: fixed;
+#          bottom: 0;
+#          background: rgba(0, 0, 0, 0.5);
+#          color: #f1f1f1;
+#          width: 50%;
+#          height: 50%;
+#          padding: 20px;
+#        }
+#
+#        </style>
+#        <video autoplay muted loop id="myVideo">
+#          <source src="https://cdn.pixabay.com/video/2021/12/08/100000-654636859_large.mp4">
+#          Your browser does not support HTML5 video.
+#        </video>
+#         """
 
-       #myVideo {
-         position: fixed;
-         right: 0;
-         bottom: 0;
-         min-width: 100%; 
-         min-height: 100%;
-         object-fit: fit;
-
-       }
-
-       .content {
-         position: fixed;
-         bottom: 0;
-         background: rgba(0, 0, 0, 0.5);
-         color: #f1f1f1;
-         width: 50%;
-         height: 50%;
-         padding: 20px;
-       }
-
-       </style>   
-       <video autoplay muted loop id="myVideo">
-         <source src="https://cdn.pixabay.com/video/2021/12/08/100000-654636859_large.mp4">
-         Your browser does not support HTML5 video.
-       </video>
-        """
-
-st.markdown(video_html, unsafe_allow_html=True)
+# st.markdown(video_html, unsafe_allow_html=True)
 
 # HTML ve CSS ile ses oynatıcıyı özelleştirme
 st.markdown(
@@ -209,7 +209,8 @@ with home_tab:
     # Üçlü kolonlar
     # Her bir kolona video başlığı ve linki ekleme
     # Her 3 video için bir satırda 3 kolon oluşturma
-    for i in range(0, len(videos), 3):
+    # for i in range(0, len(videos), 3):
+    for i in range(0, 30, 3):
         cols = home_tab.columns(3)  # 3 kolon oluştur
         for j, col in enumerate(cols):
             if i + j < len(videos):  # Listenin sonunu aşmamak için kontrol
@@ -390,13 +391,14 @@ with recommendation_tab:
             video_url = f"https://www.youtube.com/watch?v={video_info['id']}"
             return video_url
 
-    # query = 'Çakkıdı'
+    print("Deneme")
+    # query = 'ceza fark var'
     cols1, cols2 = st.columns(2)
     audio_features = []
     with cols1:
         # Kullanıcıdan şarkı adı girmesini isteyin
         query = st.text_input('Şarkı Adı Girin:')
-        # query = 'Çakkıdı'
+        # query = 'yerli plaka ceza'
         if query:
             access_token = get_access_token(client_id, client_secret)
             results = search_track(query, access_token)
@@ -434,7 +436,7 @@ with recommendation_tab:
 
         # Ülke seçimi
         selected_country = st.selectbox("Ülke Seçin:", countries)
-        # selected_country = 'United Kingdom'
+        # selected_country = 'Turkey'
         if query:
             print(audio_features)
             audio_features_df = pd.DataFrame([audio_features])
@@ -453,7 +455,11 @@ with recommendation_tab:
             predict_data.columns = [col.upper() for col in predict_data.columns]
             predict_data = predict_data.drop(['POSITIVE_AFFECT'], axis=1)
 
-
+            standatrlasancols = ['DANCEABILITY', 'ENERGY',
+                                 'LOUDNESS', 'SPEECHINESS', 'ACOUSTICNESS', 'INSTRUMENTALNESS',
+                                 'LIVENESS', 'VALENCE', 'TEMPO',
+                                 'GDP_PER_CAPITA', 'HEALTHY_LIFE_EXPECTANCY_AT_BIRTH']
+            sil = fe.num_cols_standardization(meta1, standatrlasancols, "ss")
             meta1.loc[len(meta)] = predict_data.iloc[0].tolist()
             for col in meta1.columns:
                 fe.replace_with_thresholds(meta1, col)
@@ -463,21 +469,15 @@ with recommendation_tab:
                                  'LIVENESS', 'VALENCE', 'TEMPO',
                                  'GDP_PER_CAPITA', 'HEALTHY_LIFE_EXPECTANCY_AT_BIRTH']
 
-            predict_data = fe.num_cols_standardization(meta1, standatrlasancols, "ss")
+
+            predict_data_finish = fe.num_cols_standardization(meta1, standatrlasancols, "ss")
             # Tahmin yapma
-            predictions = loaded_model.predict(predict_data.tail(1))
+            predictions = loaded_model.predict(predict_data_finish.tail(1))
+            # Tahmin işlemi bittiğinde predict_data değişkenini silmek için:
+            predict_data = pd.DataFrame()
             # predicted_class = model[0].predict(predict_data.tail(1))
             # Mesajı oluştur ve ekranda göster
             st.write(f"Tahmini sıralama değeri : {int(predictions)} 'dır.")
-
-            # st.write(rmse)
-
-
-# ########DANCEABILITY', 'ENERGY', 'LOUDNESS', 'SPEECHINESS', 'ACOUSTICNESS',
-       # 'LIVENESS', 'VALENCE', 'TEMPO', 'DURATION_MS', 'GDP_PER_CAPITA',
-       # 'SOCIAL_SUPPORT', 'HEALTHY_LIFE_EXPECTANCY_AT_BIRTH',
-       # 'FREEDOM_TO_MAKE_LIFE_CHOICES', 'GENEROSITY',
-       # 'PERCEPTIONS_OF_CORRUPTION', 'POSITIVE_AFFECT', 'NEGATIVE_AFFECT'],
 
 
 
